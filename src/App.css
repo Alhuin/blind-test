@@ -1,5 +1,24 @@
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
 .App {
   text-align: center;
+  flex: 1;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 .App-logo {
@@ -34,5 +53,189 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+html{
+  font:0.75em/1.5 sans-serif;
+  color:#333;
+  background-color:#fff;
+  padding:1em;
+}
+
+/* Tables */
+table{
+  width:90%;
+  margin-bottom:1em;
+  border-collapse: collapse;
+}
+th{
+  font-weight:bold;
+  background-color:#ddd;
+}
+th,
+td{
+  padding:0.5em;
+  border:1px solid #ccc;
+}
+
+.input {
+  text-align: center;
+  border:none;
+  width:95%;
+  height:100%;
+  font-family: Verdana, Helvetica, Arial, FreeSans, sans-serif;
+  font-size:12px;
+  padding: 0 4px 0 4px;
+}
+
+.input:focus {
+  /*border:2px solid #5292F7;*/
+  outline: none;
+}
+
+#main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.button {
+  display: inline-block;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 18px;
+  padding: 20px;
+  width: 150px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+#main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 90%;
+  align-items: center;
+}
+
+.control {
+  height: 50px;
+  width: 50px;
+}
+
+#player {
+  display: none;
+}
+
+#loginput {
+  height: 30px;
+  width: 25%;
+  border-radius: 25px;
+  text-align: center;
+}
+
+#loginput:focus {
+  /*border:2px solid #5292F7;*/
+  outline: none;
+}
+
+li, a {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  color: black;
+}
+
+#usersContainer {
+  height: 30vh;
+  width: 40vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader,
+.loader:before,
+.loader:after {
+  border-radius: 50%;
+  width: 2.5em;
+  height: 2.5em;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation: load7 1.8s infinite ease-in-out;
+  animation: load7 1.8s infinite ease-in-out;
+}
+.loader {
+  color: grey;
+  font-size: 4px;
+  position: relative;
+  text-indent: -9999em;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+.loader:before,
+.loader:after {
+  content: '';
+  position: absolute;
+  top: 0;
+}
+.loader:before {
+  left: -3.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.loader:after {
+  left: 3.5em;
+}
+@-webkit-keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
+  }
+}
+@keyframes load7 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 2.5em 0 -1.3em;
+  }
+  40% {
+    box-shadow: 0 2.5em 0 0;
   }
 }

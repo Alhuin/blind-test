@@ -1,24 +1,24 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Play from './Pages/Play';
+import Auth from './Pages/Auth';
+import Loading from './Pages/Loading';
+import Results from './Pages/Results';
 import './App.css';
+import openSocket from 'socket.io-client';
+const socket = openSocket('http://localhost:3000');
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+          <Switch>
+            <Route path="/" exact render={(props) => <Auth {...props} socket={socket}/>} />
+            <Route path="/play" render={(props) => <Play {...props} socket={socket}/>} />
+            <Route path="/loading" render={(props) => <Loading {...props} socket={socket}/>} />c
+            <Route path="/results" render={(props) => <Results {...props} socket={socket}/>} />c
+          </Switch>
+      </Router>
     </div>
   );
 }
