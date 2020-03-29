@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import openSocket from 'socket.io-client';
-const socket = openSocket('http://82.64.42.159:8080/');
 
 class Loading extends Component {
   constructor(props) {
@@ -13,18 +11,17 @@ class Loading extends Component {
   }
 
   componentDidMount() {
-    socket.on('setUsers', (users) => {
+    this.props.socket.on('setUsers', (users) => {
       this.setState({ users })
     });
-    socket.on('begin', () => {
+    this.props.socket.on('begin', () => {
       this.props.history.push({
         pathname: "/play",
-        socket: socket,
         state: { admin: this.state.admin }
       });
     });
-    socket.on('admin', () => this.setState({admin: true}));
-    socket.emit('getUsers');
+    this.props.socket.on('admin', () => this.setState({admin: true}));
+    this.props.socket.emit('getUsers');
   }
 
   // begin = () => <Redirect to={"/play"}/>;
@@ -65,12 +62,11 @@ class Loading extends Component {
             pathname: "/play",
             state: {
               admin: this.state.admin,
-              socket: socket,
             }
           }}>
             <button
               className={"button"}
-              onClick={()=> socket.emit('beginPlay')}
+              onClick={()=> this.props.socket.emit('beginPlay')}
               disabled={!this.state.admin}
             >
               <span>Jouer</span>

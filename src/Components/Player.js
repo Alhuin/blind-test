@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import ReactPlayer from "react-player";
+import React, { Component } from 'react'
+import { Media, Player } from 'react-media-player'
 
-class Player extends Component {
+class MediaPlayer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,18 +29,24 @@ class Player extends Component {
   }
 
   render() {
-    return <ReactPlayer
-      id={'player'}
-      url={this.state.url}
-      playing
-      onPlay={() => {
-          setTimeout(() => {
-            this.props.socket.emit('getNextUrl')
-          }, 30000)
-        }
-      }
-    />
+    return (
+      <Media>
+        <div className="media" id={"player"}>
+          <div className="media-player">
+            <Player
+              autoPlay
+              src={this.state.url}
+              onPlay={ () => {
+                setTimeout(() => {
+                  this.props.socket.emit('getNextUrl')
+                }, 30000)
+              }}
+            />
+          </div>
+        </div>
+      </Media>
+    )
   }
 }
 
-export default Player;
+export default MediaPlayer;

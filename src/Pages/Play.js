@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Player from '../Components/Player';
+import MediaPlayer from '../Components/Player';
 import Controls from '../Components/Controls';
 import { Link } from 'react-router-dom';
 
@@ -12,7 +12,6 @@ class Play extends Component {
       answers: [],
       endReached : false,
       admin: this.props.location.state.admin,
-      socket: this.props.location.state.socket,
       score: 0,
       corrected: false,
     };
@@ -20,26 +19,26 @@ class Play extends Component {
   }
 
   componentDidMount() {
-    this.state.socket.on('correction', (correct) => {
+    this.props.socket.on('correction', (correct) => {
       this.setState({ score: correct.length});
       correct.forEach((correct) => document.getElementById(correct).style.color = 'green')
     });
 
-    this.state.socket.on('sendMusics', (musics) => {
+    this.props.socket.on('sendMusics', (musics) => {
       this.setState({ musics });
       console.log(this.state.musics);
     });
 
-    this.state.socket.on('launch', () => {
+    this.props.socket.on('launch', () => {
       this.setState({playerLaunched: true});
       document.getElementById('launch').style.display = 'none';
       this.props.socket.emit('getNextUrl');
     });
 
-    this.state.socket.on('endPlaylist', () => {
+    this.props.socket.on('endPlaylist', () => {
       this.setState({endReached: true});
     });
-    this.state.socket.emit('getMusics');
+    this.props.socket.emit('getMusics');
   }
 
   addArtist = (e) => {
@@ -99,11 +98,11 @@ class Play extends Component {
           admin={this.state.admin}
           launch={() => {
             document.getElementById('launch').style.display = 'none';
-            this.state.socket.emit('launchedPlaylist');
+            this.props.socket.emit('launchedPlaylist');
           }}
           // next={() => alert('next')}
         />
-        { this.state.playerLaunched && (<Player admin={this.state.admin} socket={this.state.socket}/>)}
+        { this.state.playerLaunched && (<MediaPlayer admin={this.state.admin} socket={this.props.socket}/>)}
         <table>
           <thead>
           <tr>
@@ -120,11 +119,7 @@ class Play extends Component {
         { this.state.corrected ?
           (
             <li>
-              <Link to={{
-                pathname: "/results",
-                state: {
-                  socket: this.state.socket,
-                }}}>
+              <Link to={"/results"}>
                 <button
                 id={'submit'}
                 className={"button"}
@@ -141,7 +136,7 @@ class Play extends Component {
               className={"button"}
               type={"submit"}
               onClick={() => {
-                this.state.socket.emit('submit', 'ju', this.state.answers);
+                this.props.socket.emit('submit', 'ju', this.state.answers);
                 this.setState({ corrected: true});
                 document.getElementById("score").style.display = 'block';
               }}

@@ -111,15 +111,12 @@ class Auth extends Component {
             </tbody>
           </table>
         <li>
-          <Link  to={{
-            pathname: "/loading",
-            state: {
-              musics: this.state.addedMusics,
-              userName: this.state.userName,
-            }
-          }}>
+          <Link  to={"/loading"}>
             <button
               className={"button"}
+              onClick={() => {
+                this.props.socket.emit('enter', this.state.userName, this.state.addedMusics)
+              }}
             >
               <span>Entrer</span>
             </button>
