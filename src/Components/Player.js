@@ -12,7 +12,6 @@ class Player extends Component {
 
   componentDidMount() {
     this.props.socket.on('nextUrl', (url) => {
-      console.log('nexturl front');
       if (this.state.url === '') {
         this.setState({url})
       } else {
