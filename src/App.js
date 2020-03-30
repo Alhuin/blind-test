@@ -6,7 +6,7 @@ import Loading from './Pages/Loading';
 import Results from './Pages/Results';
 import './App.css';
 import openSocket from 'socket.io-client';
-const socket = openSocket('82.64.42.159:8080/');
+const socket = openSocket('localhost:8080/');
 
 function App() {
   return (

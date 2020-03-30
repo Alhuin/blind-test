@@ -14,13 +14,16 @@ class Loading extends Component {
     this.props.socket.on('setUsers', (users) => {
       this.setState({ users })
     });
+
     this.props.socket.on('begin', () => {
       this.props.history.push({
         pathname: "/play",
         state: { admin: this.state.admin }
       });
     });
+
     this.props.socket.on('admin', () => this.setState({admin: true}));
+
     this.props.socket.emit('getUsers');
   }
 

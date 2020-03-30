@@ -12,20 +12,8 @@ class MediaPlayer extends Component {
 
   componentDidMount() {
     this.props.socket.on('nextUrl', (url) => {
-      if (this.state.url === '') {
-        this.setState({url})
-      } else {
-        this.setState({url: ''});
-        setTimeout(() => {
-          this.setState({url})
-        }, 10000)
-      }
+      this.setState({url})
     });
-
-    this.props.socket.on('endPlaylist', () => {
-      this.setState({ url: '' })
-    });
-
   }
 
   render() {
@@ -34,13 +22,16 @@ class MediaPlayer extends Component {
         <div className="media" id={"player"}>
           <div className="media-player">
             <Player
+              onTimeUpdate={(e) => {
+                if (e.currentTime > 30) {
+                  this.setState({url: ''});
+                  setTimeout(() => {
+                    this.props.socket.emit('getNextUrl');
+                  }, 10000)
+                }
+              }}
               autoPlay
               src={this.state.url}
-              onPlay={ () => {
-                setTimeout(() => {
-                  this.props.socket.emit('getNextUrl')
-                }, 30000)
-              }}
             />
           </div>
         </div>

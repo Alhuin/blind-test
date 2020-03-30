@@ -28,15 +28,45 @@ io.on('connection', (socket) => {
 
   console.log('user connected');
 
+  // Click Enter in auth
+
+  socket.on('enter', (userName, addedMusics) => {
+
+    socket.username = userName;
+    socket.i = 0;
+
+    console.log(socket.username + 'entered loading screen');
+
+    addedMusics.forEach((music) => {
+      music.id = id;
+      id++;
+      musics.push(music);
+    });
+
+    console.log(addedMusics);
+
+    if (!users.length) {
+      socket.emit('admin');
+      console.log(socket.username + 'isAdmin');
+    }
+    users.push({ name: userName, nbMusics: addedMusics.length });
+  });
+
+  // On Loading screen
+  socket.on('getUsers', () => {
+    io.emit('setUsers', users);
+  });
+
+  socket.on('beginPlay', () => {
+    console.log('user ' + socket.username + ' clicked Play on Loading screen, going to Play');
+    io.emit('begin')
+  });
+
   socket.on('getMusics', () => {
     console.log('sending musics');
-    console.log(musics);
     socket.emit('sendMusics', musics);
   });
 
-  // socket.on('getFirstUrl', function() {
-  //   io.emit('nextUrl', musics[0].link);
-  // });
 
   socket.on('getNextUrl', function() {
     console.log('GNU');
@@ -80,31 +110,6 @@ io.on('connection', (socket) => {
     io.emit('setScores', scores)
   });
 
-  socket.on('beginPlay', () => {
-    if (socket.username !== ''){
-      io.emit('begin')
-    }
-  });
-
-  socket.on('enter', (userName, addedMusics) => {
-    console.log('adding musics');
-
-    addedMusics.forEach((music) => {
-      music.id = id;
-      id++;
-      musics.push(music);
-    });
-    socket.username = userName;
-    socket.i = 0;
-    if (!users.length) {
-      socket.emit('admin');
-    }
-    users.push({ name: userName, nbMusics: addedMusics.length });
-  });
-
-  socket.on('getUsers', () => {
-    io.emit('setUsers', users);
-  });
 
   socket.on('launchedPlaylist', function() {
     io.emit('launch');

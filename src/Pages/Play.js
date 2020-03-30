@@ -26,18 +26,16 @@ class Play extends Component {
 
     this.props.socket.on('sendMusics', (musics) => {
       this.setState({ musics });
-      console.log(this.state.musics);
     });
 
     this.props.socket.on('launch', () => {
-      this.setState({playerLaunched: true});
-      document.getElementById('launch').style.display = 'none';
       this.props.socket.emit('getNextUrl');
     });
 
     this.props.socket.on('endPlaylist', () => {
       this.setState({endReached: true});
     });
+
     this.props.socket.emit('getMusics');
   }
 
@@ -100,9 +98,8 @@ class Play extends Component {
             document.getElementById('launch').style.display = 'none';
             this.props.socket.emit('launchedPlaylist');
           }}
-          // next={() => alert('next')}
         />
-        { this.state.playerLaunched && (<MediaPlayer admin={this.state.admin} socket={this.props.socket}/>)}
+        <MediaPlayer admin={this.state.admin} socket={this.props.socket}/>
         <table>
           <thead>
           <tr>
