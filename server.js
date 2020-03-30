@@ -10,17 +10,38 @@ let id = 1;
 const musics = [];
 const users = [];
 
+const shuffle = function (array) {
+
+  let currentIndex = array.length;
+  let temporaryValue, randomIndex;
+
+  while (0 !== currentIndex) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+
+};
+
 const strcmp = (str1, str2) => {
-  const s1 = str1.replace(' ', '').toLowerCase();
-  const s2 = str2.replace(' ', '').toLowerCase();
+  const s1 = str1.replace(/\s/g, '').toLowerCase();
+  const s2 = str2.replace(/\s/g, '').toLowerCase();
   let diff = 0;
+
+  console.log('user answered = ' + s1);
+  console.log('correction = ' + s2);
 
   s2.split('').forEach(function(val, i){
     if (val !== s1.charAt(i))
       diff += 1;
   });
 
-  console.log(`diff ${s1} vs ${s2} = ${diff}`)
+  console.log(`diff = ${diff}`);
   return diff;
 };
 
@@ -38,8 +59,6 @@ io.on('connection', (socket) => {
     console.log(socket.username + 'entered loading screen');
 
     addedMusics.forEach((music) => {
-      music.id = id;
-      id++;
       musics.push(music);
     });
 
@@ -58,6 +77,12 @@ io.on('connection', (socket) => {
   });
 
   socket.on('beginPlay', () => {
+    shuffle(musics);
+    musics.forEach((music) => {
+      music.id = id;
+      id++;
+    });
+
     console.log('user ' + socket.username + ' clicked Play on Loading screen, going to Play');
     io.emit('begin')
   });
@@ -73,6 +98,7 @@ io.on('connection', (socket) => {
     console.log(socket.username);
     console.log(socket.i);
     if (socket.i === musics.length) {
+      console.log('sending endPlaylist to ' + socket.username);
       socket.emit('endPlaylist');
     } else {
       socket.emit('nextUrl', musics[socket.i].link);
@@ -85,6 +111,7 @@ io.on('connection', (socket) => {
     let points = 0;
     const correct = [];
 
+    console.log(socket.username + ' correction');
     answers.forEach((answer) => {
       const { id, artist, title } = answer;
       musics.forEach((song) => {
@@ -107,7 +134,7 @@ io.on('connection', (socket) => {
 
   socket.on('getScores', () => {
     console.log(scores);
-    io.emit('setScores', scores)
+    io.emit('setScores', scores, musics)
   });
 
 

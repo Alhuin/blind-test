@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 
 class Auth extends Component {
   constructor(props) {
@@ -52,20 +51,33 @@ class Auth extends Component {
 
   addLink = (e) => {
     const { addedMusics } = this.state;
-    const answerId = e.target.className;
+    const musicId = e.target.className;
     let edition = false;
 
-    addedMusics.forEach((answerRow) => {
-      if (answerId === answerRow.id) {
-        answerRow.link = e.target.value;
+    addedMusics.forEach((music) => {
+      if (musicId === music.id) {
+        music.link = e.target.value;
         edition = true;
       }
     });
 
     if (!edition) {
-      addedMusics.push({artist: '', title: '', link: e.target.value})
+      addedMusics.push({id: musicId, artist: '', title: '', link: e.target.value})
     }
     this.setState({ addedMusics });
+  };
+
+  handleClick = () => {
+    if (this.state.userName.replace(/\s/g, '') === '') {
+      alert('Rentre un nom !');
+    } else if (this.state.addedMusics.length !== 5) {
+      alert('Rentre 5 musiques !')
+    } else {
+      this.props.socket.emit('enter', this.state.userName, this.state.addedMusics);
+      this.props.history.push({
+        pathname: "/loading",
+      });
+    }
   };
 
   render() {
@@ -110,18 +122,12 @@ class Auth extends Component {
               </tr>
             </tbody>
           </table>
-        <li>
-          <Link  to={"/loading"}>
-            <button
-              className={"button"}
-              onClick={() => {
-                this.props.socket.emit('enter', this.state.userName, this.state.addedMusics)
-              }}
-            >
-              <span>Entrer</span>
-            </button>
-          </Link>
-        </li>
+          <button
+            className={"button"}
+            onClick={() => this.handleClick()}
+          >
+            <span>Entrer</span>
+          </button>
       </div>
     )
   }

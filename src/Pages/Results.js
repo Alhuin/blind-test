@@ -5,13 +5,14 @@ class Results extends Component {
     super(props);
     this.state = {
       scores: [],
+      musics: [],
     }
   }
 
   componentDidMount() {
     this.props.socket.emit('getScores');
-    this.props.socket.on('setScores', (scores) => {
-      this.setState({ scores })
+    this.props.socket.on('setScores', (scores, musics) => {
+      this.setState({ scores, musics })
     });
   }
 
@@ -37,16 +38,28 @@ class Results extends Component {
     })
   }
 
+  renderMusics() {
+    return this.state.musics.map((music, index) => {
+      return (
+        <tr key={index}>
+          <td>{index + 1}</td>
+          <td>{music.artist}</td>
+          <td>{music.title}</td>
+        </tr>
+      )
+    })
+  }
+
   render() {
     return(
       <div id={'main'}>
         <h2>
-          Résultats
+          Classement
         </h2>
           <table>
             <thead>
             <tr>
-              <th>Classement</th>
+              <th>Place</th>
               <th>Utilisateur</th>
               <th>Score</th>
             </tr>
@@ -55,6 +68,21 @@ class Results extends Component {
             {this.renderTableData()}
             </tbody>
           </table>
+        <h2>
+          Réponses
+        </h2>
+        <table>
+          <thead>
+          <tr>
+            <th></th>
+            <th>Artiste</th>
+            <th>Titre</th>
+          </tr>
+          </thead>
+          <tbody>
+          {this.renderMusics()}
+          </tbody>
+        </table>
       </div>
     )
   }
