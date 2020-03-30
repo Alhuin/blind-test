@@ -7,7 +7,7 @@ const express = require('express'),
 const typoTolerance = 3;
 const scores = [];
 let id = 1;
-const musics = [];
+let musics = [];
 const users = [];
 
 const shuffle = function (array) {
@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('beginPlay', () => {
-    shuffle(musics);
+    musics = shuffle(musics);
     musics.forEach((music) => {
       music.id = id;
       id++;

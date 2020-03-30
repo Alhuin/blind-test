@@ -68,15 +68,29 @@ class Auth extends Component {
   };
 
   handleClick = () => {
+    let error = false;
+
     if (this.state.userName.replace(/\s/g, '') === '') {
       alert('Rentre un nom !');
     } else if (this.state.addedMusics.length !== 5) {
       alert('Rentre 5 musiques !')
     } else {
-      this.props.socket.emit('enter', this.state.userName, this.state.addedMusics);
-      this.props.history.push({
-        pathname: "/loading",
+
+      this.state.addedMusics.forEach((music) => {
+        if (music.artist.replace(/\s/g, '') === ''
+          || music.title.replace(/\s/g, '') === ''
+          || music.link.replace(/\s/g, '') === '') {
+          alert('Remplis tous les champs de tes musiques');
+          error = true;
+        }
       });
+
+      if (!error) {
+        this.props.socket.emit('enter', this.state.userName, this.state.addedMusics);
+        this.props.history.push({
+          pathname: "/loading",
+        });
+      }
     }
   };
 

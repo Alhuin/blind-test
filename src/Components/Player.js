@@ -27,7 +27,7 @@ class MediaPlayer extends Component {
                   this.setState({url: ''});
                   setTimeout(() => {
                     this.props.socket.emit('getNextUrl');
-                  }, 10000)
+                  }, 5000)
                 }
               }}
               autoPlay
