@@ -12,8 +12,8 @@ class Play extends Component {
       answers: [],
       endReached : false,
       admin: this.props.location.state.admin,
-      score: 0,
-      corrected: false,
+      playing: 0,
+      userName: this.props.location.state.userName,
     };
 
   }
@@ -25,7 +25,11 @@ class Play extends Component {
     });
 
     this.props.socket.on('sendMusics', (musics) => {
-      this.setState({ musics });
+      const answers = [];
+      musics.forEach((music) => {
+        answers.push({id: music.id, artist:'', title:''})
+      });
+      this.setState({ musics, answers });
     });
 
     this.props.socket.on('launch', () => {
@@ -36,56 +40,90 @@ class Play extends Component {
       this.setState({endReached: true});
     });
 
+    this.props.socket.on('nextUrl', (id, url) => {
+      this.setState({playing: id})
+    });
+
     this.props.socket.emit('getMusics');
   }
+
+  strcmp = (str1, str2) => {
+    const s1 = str1.replace(/\s/g, '').toLowerCase();
+    const s2 = str2.replace(/\s/g, '').toLowerCase();
+
+    let diff = 0;
+
+    console.log('user answered = ' + s1);
+    console.log('correction = ' + s2);
+
+    s2.split('').forEach(function(val, i){
+      if (val !== s1.charAt(i))
+        diff += 1;
+    });
+
+    console.log(`diff = ${diff}`);
+    return diff;
+  };
 
   addArtist = (e) => {
     const { answers } = this.state;
     const answerId = e.target.className.replace(' input', '');
-    let edition = false;
 
     answers.forEach((answerRow) => {
-      if (answerId === answerRow.id) {
-        answerRow.artist = e.target.value.toLowerCase().replace(' ', '');
-        edition = true;
+      if (answerId.toString() === answerRow.id.toString()) {
+        answerRow.artist = e.target.value;
       }
     });
 
-    if (!edition) {
-      answers.push({id: answerId, artist: e.target.value.toLowerCase().replace(' ', ''), title: ''})
-    }
     this.setState({ answers });
   };
 
   addTitle = (e) => {
     const { answers } = this.state;
     const answerId = e.target.className.replace(' input', '');
-    let edition = false;
 
     answers.forEach((answerRow) => {
-      if (answerId === answerRow.id) {
-        answerRow.title = e.target.value.toLowerCase();
-        edition = true;
+      if (answerId.toString() === answerRow.id.toString()) {
+        answerRow.title = e.target.value;
       }
     });
 
-    if (!edition) {
-      answers.push({id: answerId, artist: '', title: e.target.value.toLowerCase().replace(' ', '')})
-    }
     this.setState({ answers });
   };
 
   renderTableData() {
     return this.state.musics.map((song, index) => {
       const { id } = song;
+
       return (
-        <tr key={id}>
-          <td>{id}</td>
+        <tr key={id}  className={!this.state.endReached && this.state.playing === id ? "playing" : ""}>
+          <td> {id}</td>
           <td><input id={`${id}.0`} className={id + ' input'} onChange={this.addArtist}/></td>
           <td><input id={`${id}.1`} className={id + ' input'} onChange={this.addTitle}/></td>
         </tr>
       )
     })
+  }
+
+  sendCorrection() {
+    if (this.state.endReached) {
+      const correction = { lines: [], points: 0 };
+
+      this.state.musics.forEach((music, index) => {
+        const artistIsCorrect = this.strcmp(this.state.answers[index].artist, music.artist) < (music.artist.length > 4 ? 3 : 1);
+        const titleIsCorrect = this.strcmp(this.state.answers[index].title, music.title) < (music.title.length > 4 ? 3 : 1);
+        const line = {
+          id: index + 1,
+          artist: this.state.answers[index].artist + (!artistIsCorrect ? '     \u274C     ( ' + music.artist + ' )' : ' \u2705'),
+          title: this.state.answers[index].title + (!titleIsCorrect ? '     \u274C     ( ' + music.title + ' )' : ' \u2705'),
+        };
+
+        correction.lines.push(line);
+        correction.points += artistIsCorrect + titleIsCorrect;
+      });
+
+      this.props.socket.emit('sendCorrection', correction);
+    }
   }
 
   render() {
@@ -109,40 +147,31 @@ class Play extends Component {
           </tr>
           </thead>
           <tbody>
-          {this.renderTableData()}
+            {this.renderTableData()}
           </tbody>
         </table>
-        <div id={"score"} style={{display: 'none', fontSize: '20px'}}>Ton score: {this.state.score}</div>
-        { this.state.corrected ?
-          (
-            <li>
-              <Link to={"/results"}>
-                <button
-                id={'submit'}
-                className={"button"}
-                type={"submit"}
-                >
-                  <span>Résultats </span>
-                </button>
-              </Link>
-            </li>
-          )
-          : (
-            <button
+          <li>
+            <Link to={{
+              pathname: "/results",
+              state: {
+                answers: this.state.answers,
+                userName: this.state.userName,
+                musics: this.state.musics,
+              },
+            }}>
+              <button
               id={'submit'}
               className={"button"}
               type={"submit"}
               onClick={() => {
-                this.props.socket.emit('submit', 'ju', this.state.answers);
-                this.setState({ corrected: true});
-                document.getElementById("score").style.display = 'block';
+                this.sendCorrection();
               }}
               disabled={!this.state.endReached}
-            >
-              <span>Corriger </span>
-            </button>
-          )}
-
+              >
+                <span>Résultats </span>
+              </button>
+            </Link>
+          </li>
       </div>
     )
   }

@@ -7,6 +7,7 @@ class Loading extends Component {
     this.state = {
       users: [],
       admin: false,
+      userName: this.props.location.state.userName,
     }
   }
 
@@ -18,16 +19,13 @@ class Loading extends Component {
     this.props.socket.on('begin', () => {
       this.props.history.push({
         pathname: "/play",
-        state: { admin: this.state.admin }
+        state: { admin: this.state.admin, userName: this.state.userName }
       });
     });
 
     this.props.socket.on('admin', () => this.setState({admin: true}));
-
     this.props.socket.emit('getUsers');
   }
-
-  // begin = () => <Redirect to={"/play"}/>;
 
   renderTableData() {
     return this.state.users.map((user, index) => {
@@ -56,7 +54,7 @@ class Loading extends Component {
             </tr>
             </thead>
             <tbody>
-            {this.renderTableData()}
+              {this.renderTableData()}
             </tbody>
           </table>
         </div>
@@ -65,6 +63,7 @@ class Loading extends Component {
             pathname: "/play",
             state: {
               admin: this.state.admin,
+              userName: this.state.userName,
             }
           }}>
             <button

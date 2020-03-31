@@ -4,11 +4,11 @@ const express = require('express'),
   server = http.createServer(app),
   io = require('socket.io').listen(server);
 
-const typoTolerance = 3;
-const scores = [];
 let id = 1;
 let musics = [];
 const users = [];
+const corrections = [];
+const scores = [];
 
 const shuffle = function (array) {
 
@@ -28,22 +28,6 @@ const shuffle = function (array) {
 
 };
 
-const strcmp = (str1, str2) => {
-  const s1 = str1.replace(/\s/g, '').toLowerCase();
-  const s2 = str2.replace(/\s/g, '').toLowerCase();
-  let diff = 0;
-
-  console.log('user answered = ' + s1);
-  console.log('correction = ' + s2);
-
-  s2.split('').forEach(function(val, i){
-    if (val !== s1.charAt(i))
-      diff += 1;
-  });
-
-  console.log(`diff = ${diff}`);
-  return diff;
-};
 
 io.on('connection', (socket) => {
 
@@ -101,43 +85,25 @@ io.on('connection', (socket) => {
       console.log('sending endPlaylist to ' + socket.username);
       socket.emit('endPlaylist');
     } else {
-      socket.emit('nextUrl', musics[socket.i].link);
+      socket.emit('nextUrl', musics[socket.i].id, musics[socket.i].link);
       socket.i++;
     }
   });
 
-  socket.on('submit', (userNickname, answers) => {
-    console.log('submit');
-    let points = 0;
-    const correct = [];
-
-    console.log(socket.username + ' correction');
-    answers.forEach((answer) => {
-      const { id, artist, title } = answer;
-      musics.forEach((song) => {
-        if (song.id.toString() === id.toString()) {
-          if (strcmp(artist, song.artist) < typoTolerance) {
-            points += 1;
-            correct.push(`${id}.0`)
-          }
-          if (strcmp(title, song.title) < typoTolerance) {
-            points += 1;
-            correct.push(`${id}.1`)
-          }
-        }
-      })
-    });
-    const username = socket.username;
-    socket.emit('correction', correct);
-    scores.push({ username, points });
+  socket.on('sendCorrection', (correction) => {
+    const user = socket.username;
+    console.log('revieved sendCorreection');
+    console.log(correction);
+    corrections.push({ user, correction: correction.lines, points: correction.points });
+    scores.push({ user, points: correction.points });
   });
 
-  socket.on('getScores', () => {
+  socket.on('getCorrections', () => {
+    console.log('emitting setCorrections');
+    console.log(corrections);
     console.log(scores);
-    io.emit('setScores', scores, musics)
+    io.emit('setCorrections', corrections, scores);
   });
-
-
   socket.on('launchedPlaylist', function() {
     io.emit('launch');
   });

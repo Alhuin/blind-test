@@ -6,12 +6,11 @@ class MediaPlayer extends Component {
     super(props);
     this.state = {
       url: '',
-      admin: this.props,
     };
   }
 
   componentDidMount() {
-    this.props.socket.on('nextUrl', (url) => {
+    this.props.socket.on('nextUrl', (id, url) => {
       this.setState({url})
     });
   }

@@ -14,6 +14,8 @@ class Auth extends Component {
   };
 
   addArtist = (e) => {
+    if (e.target.value.replace('/\s/g', '') === '')
+      return;
     const { addedMusics } = this.state;
     const musicId = e.target.className;
     let edition = false;
@@ -32,6 +34,8 @@ class Auth extends Component {
   };
 
   addTitle = (e) => {
+    if (e.target.value.replace('/\s/g', '') === '')
+      return;
     const { addedMusics } = this.state;
     const musicId = e.target.className;
     let edition = false;
@@ -75,7 +79,6 @@ class Auth extends Component {
     } else if (this.state.addedMusics.length !== 5) {
       alert('Rentre 5 musiques !')
     } else {
-
       this.state.addedMusics.forEach((music) => {
         if (music.artist.replace(/\s/g, '') === ''
           || music.title.replace(/\s/g, '') === ''
@@ -89,6 +92,9 @@ class Auth extends Component {
         this.props.socket.emit('enter', this.state.userName, this.state.addedMusics);
         this.props.history.push({
           pathname: "/loading",
+          state: {
+            userName: this.state.userName,
+          }
         });
       }
     }
