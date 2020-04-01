@@ -60,15 +60,15 @@ html{
   font:0.75em/1.5 sans-serif;
   color:#333;
   background-color:#fff;
-  padding:1em;
 }
 
 /* Tables */
-table{
-  width:90%;
+.table{
+  width:90%!important;
   margin-bottom:1em;
   border-collapse: collapse;
 }
+
 th{
   font-weight:bold;
   background-color:#ddd;
@@ -177,7 +177,7 @@ li, a {
 
 #usersContainer {
   height: 30vh;
-  width: 40vw;
+  width: 25vw;
   display: flex;
   align-items: center;
   justify-content: center;

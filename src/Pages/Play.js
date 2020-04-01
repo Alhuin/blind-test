@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import MediaPlayer from '../Components/Player';
 import Controls from '../Components/Controls';
 import { Link } from 'react-router-dom';
+import CustomTable from "../Components/CustomTable";
 
 class Play extends Component {
   constructor(props) {
@@ -65,7 +66,7 @@ class Play extends Component {
     return diff;
   };
 
-  addArtist = (e) => {
+  updateArtist = (e) => {
     const { answers } = this.state;
     const answerId = e.target.className.replace(' input', '');
 
@@ -78,7 +79,7 @@ class Play extends Component {
     this.setState({ answers });
   };
 
-  addTitle = (e) => {
+  updateTitle = (e) => {
     const { answers } = this.state;
     const answerId = e.target.className.replace(' input', '');
 
@@ -90,20 +91,6 @@ class Play extends Component {
 
     this.setState({ answers });
   };
-
-  renderTableData() {
-    return this.state.musics.map((song, index) => {
-      const { id } = song;
-
-      return (
-        <tr key={id}  className={!this.state.endReached && this.state.playing === id ? "playing" : ""}>
-          <td> {id}</td>
-          <td><input id={`${id}.0`} className={id + ' input'} onChange={this.addArtist}/></td>
-          <td><input id={`${id}.1`} className={id + ' input'} onChange={this.addTitle}/></td>
-        </tr>
-      )
-    })
-  }
 
   sendCorrection() {
     if (this.state.endReached) {
@@ -127,6 +114,8 @@ class Play extends Component {
   }
 
   render() {
+    const { musics, playing, endReached } = this.state;
+
     return (
       <div id={"main"}>
         <h2>Blind Test</h2>
@@ -138,40 +127,36 @@ class Play extends Component {
           }}
         />
         <MediaPlayer admin={this.state.admin} socket={this.props.socket}/>
-        <table>
-          <thead>
-          <tr>
-            <th></th>
-            <th>Artiste</th>
-            <th>Titre</th>
-          </tr>
-          </thead>
-          <tbody>
-            {this.renderTableData()}
-          </tbody>
-        </table>
-          <li>
-            <Link to={{
-              pathname: "/results",
-              state: {
-                answers: this.state.answers,
-                userName: this.state.userName,
-                musics: this.state.musics,
-              },
-            }}>
-              <button
-              id={'submit'}
-              className={"button"}
-              type={"submit"}
-              onClick={() => {
-                this.sendCorrection();
-              }}
-              disabled={!this.state.endReached}
-              >
-                <span>Résultats </span>
-              </button>
-            </Link>
-          </li>
+        <CustomTable
+          type={"Play"}
+          updateArtist={this.updateArtist}
+          updateTitle={this.updateTitle}
+          musics={musics}
+          playing={playing}
+          endReached={endReached}
+        />
+        <li>
+          <Link to={{
+            pathname: "/results",
+            state: {
+              answers: this.state.answers,
+              userName: this.state.userName,
+              musics: this.state.musics,
+            },
+          }}>
+            <button
+            id={'submit'}
+            className={"button"}
+            type={"submit"}
+            onClick={() => {
+              this.sendCorrection();
+            }}
+            disabled={!this.state.endReached}
+            >
+              <span>Résultats </span>
+            </button>
+          </Link>
+        </li>
       </div>
     )
   }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import CustomTable from "../Components/CustomTable";
 
 class Loading extends Component {
   constructor(props) {
@@ -27,18 +28,10 @@ class Loading extends Component {
     this.props.socket.emit('getUsers');
   }
 
-  renderTableData() {
-    return this.state.users.map((user, index) => {
-      return (
-        <tr key={index}>
-          <td>{user.name}</td>
-          <td>{user.nbMusics}</td>
-        </tr>
-      )
-    })
-  }
 
   render() {
+    const { users } = this.state;
+
     return(
       <div id={'main'}>
         <h2>
@@ -46,17 +39,7 @@ class Loading extends Component {
         </h2>
         <div className="loader">Loading...</div>
         <div id={'usersContainer'}>
-          <table>
-            <thead>
-            <tr>
-              <th>Utilisateur</th>
-              <th>Musiques ajoutées</th>
-            </tr>
-            </thead>
-            <tbody>
-              {this.renderTableData()}
-            </tbody>
-          </table>
+          <CustomTable type={"Loading"} users={users} />
         </div>
         <li>
           <Link to={{

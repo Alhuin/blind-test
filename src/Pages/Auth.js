@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import CustomTable from "../Components/CustomTable";
 
 class Auth extends Component {
   constructor(props) {
@@ -9,13 +10,11 @@ class Auth extends Component {
     }
   }
 
-  addUserName = (e) => {
+  updateUserName = (e) => {
     this.setState({ userName: e.target.value})
   };
 
-  addArtist = (e) => {
-    if (e.target.value.replace('/\s/g', '') === '')
-      return;
+  updateArtist = (e) => {
     const { addedMusics } = this.state;
     const musicId = e.target.className;
     let edition = false;
@@ -33,9 +32,7 @@ class Auth extends Component {
     this.setState({ addedMusics });
   };
 
-  addTitle = (e) => {
-    if (e.target.value.replace('/\s/g', '') === '')
-      return;
+  updateTitle = (e) => {
     const { addedMusics } = this.state;
     const musicId = e.target.className;
     let edition = false;
@@ -53,7 +50,7 @@ class Auth extends Component {
     this.setState({ addedMusics });
   };
 
-  addLink = (e) => {
+  updateLink = (e) => {
     const { addedMusics } = this.state;
     const musicId = e.target.className;
     let edition = false;
@@ -104,44 +101,14 @@ class Auth extends Component {
     return (
       <div id={"main"}>
         <h2>Ton Nom</h2>
-        <input id={'loginput'} type={"text"} placeholder={"Nom"} onChange={this.addUserName}/>
+          <input id={'loginput'} type={"text"} placeholder={"Nom"} onChange={this.updateUserName}/>
         <h2>Tes musiques</h2>
-        <table>
-            <thead>
-            <tr>
-              <th>Artiste</th>
-              <th>Titre</th>
-              <th>Lien Youtube</th>
-            </tr>
-            </thead>
-            <tbody>
-              <tr key={1}>
-                <td><input className={1 + ' input'} onChange={this.addArtist}/></td>
-                <td><input className={1 + ' input'} onChange={this.addTitle}/></td>
-                <td><input className={1 + ' input'} onChange={this.addLink}/></td>
-              </tr>
-              <tr key={2}>
-                <td><input className={2 + ' input'} onChange={this.addArtist}/></td>
-                <td><input className={2 + ' input'} onChange={this.addTitle}/></td>
-                <td><input className={2 + ' input'} onChange={this.addLink}/></td>
-              </tr>
-              <tr key={3}>
-                <td><input className={3 + ' input'} onChange={this.addArtist}/></td>
-                <td><input className={3 + ' input'} onChange={this.addTitle}/></td>
-                <td><input className={3 + ' input'} onChange={this.addLink}/></td>
-              </tr>
-              <tr key={4}>
-                <td><input className={4 + ' input'} onChange={this.addArtist}/></td>
-                <td><input className={4 + ' input'} onChange={this.addTitle}/></td>
-                <td><input className={4 + ' input'} onChange={this.addLink}/></td>
-              </tr>
-              <tr key={5}>
-                <td><input className={5 + ' input'} onChange={this.addArtist}/></td>
-                <td><input className={5 + ' input'} onChange={this.addTitle}/></td>
-                <td><input className={5 + ' input'} onChange={this.addLink}/></td>
-              </tr>
-            </tbody>
-          </table>
+          <CustomTable
+            type={"Auth"}
+            updateArtist={this.updateArtist}
+            updateTitle={this.updateTitle}
+            updateLink={this.updateLink}
+          />
           <button
             className={"button"}
             onClick={() => this.handleClick()}
