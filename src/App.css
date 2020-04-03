@@ -147,6 +147,13 @@ td{
   align-items: center;
 }
 
+#resultsMain {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
 .control {
   height: 50px;
   width: 50px;

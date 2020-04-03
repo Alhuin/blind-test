@@ -37,7 +37,7 @@ class Results extends Component {
     }
 
     return(
-      <div id={'main'}>
+      <div id={'resultsMain'}>
         <h2>Classement</h2>
         <CustomTable
           type={"Scores"}

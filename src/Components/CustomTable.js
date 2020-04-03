@@ -65,6 +65,7 @@ class CustomTable extends Component {
       <Table aria-label="Tes réponses">
         <TableHead>
           <TableRow>
+            <TableCell></TableCell>
             <TableCell align={"center"}>Artiste</TableCell>
             <TableCell align={"center"}>Titre</TableCell>
           </TableRow>
@@ -74,6 +75,7 @@ class CustomTable extends Component {
             musics.map((music) => {
               return (
                 <TableRow key={music.id}  className={!endReached && playing === music.id ? "playing" : ""}>
+                  <TableCell>{music.id}</TableCell>
                   <TableCell>
                     <input id={`${music.id}.0`} className={music.id + ' input'} onChange={updateArtist}/>
                   </TableCell>
