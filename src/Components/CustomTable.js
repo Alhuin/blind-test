@@ -13,7 +13,7 @@ class CustomTable extends Component {
     const { updateArtist, updateTitle, updateLink } = this.props;
     const rows = [];
 
-    for (let i=0; i < 5; i++) {
+    for (let i=0; i < process.env.REACT_APP_NB_MUSICS; i++) {
       rows.push(
         <TableRow key={i + 1}>
           <TableCell><input className={i + 1 + ' input'} onChange={updateArtist}/></TableCell>
@@ -43,19 +43,12 @@ class CustomTable extends Component {
 
     return (
       <Table aria-label="Joueurs">
-        <TableHead>
-          <TableRow>
-            <TableCell align={"center"}>Joueur</TableCell>
-            <TableCell align={"center"}>Musiques ajoutées</TableCell>
-          </TableRow>
-        </TableHead>
         <TableBody>
           {
             users.map((user, index) => {
               return (
                 <TableRow key={index}>
                   <TableCell align={"center"}>{user.name}</TableCell>
-                  <TableCell align={"center"}>{user.nbMusics}</TableCell>
                 </TableRow>
               );
             })

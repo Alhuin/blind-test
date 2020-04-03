@@ -27,11 +27,11 @@ class MediaPlayer extends Component {
           <div className="media-player">
             <Player
               onTimeUpdate={(e) => {
-                if (e.currentTime > 30) {
+                if (e.currentTime > process.env.REACT_APP_DURATION) {
                   this.setState({url: '', index: this.state.index + 1});
                   setTimeout(() => {
                     this.props.socket.emit('getNextUrl', this.state.index);
-                  }, 5000)
+                  }, process.env.REACT_APP_SLEEP * 1000)
                 }
               }}
               autoPlay

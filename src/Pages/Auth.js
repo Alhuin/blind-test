@@ -69,31 +69,29 @@ class Auth extends Component {
   };
 
   handleClick = () => {
-    // let error = false;
+    let error = false;
 
     const { userName, addedMusics } = this.state;
 
-    // if (userName.replace(/\s/g, '') === '') {
-    //   alert('Rentre un nom !');
-    // } else if (addedMusics.length !== 5) {
-    //   alert('Rentre 5 musiques !')
-    // } else {
-    //   addedMusics.forEach((music) => {
-    //     if (music.artist.replace(/\s/g, '') === ''
-    //       || music.title.replace(/\s/g, '') === ''
-    //       || music.link.replace(/\s/g, '') === '') {
-    //       alert('Remplis tous les champs de tes musiques');
-    //       error = true;
-    //     }
-    //   });
-    //
-    //   if (!error) {
+    if (userName.replace(/\s/g, '') === '') {
+      alert('Rentre un nom !');
+    } else if (addedMusics.length !== process.env.REACT_APP_NB_MUSICS) {
+      alert('Rentre ' + process.env.REACT_APP_NB_MUSICS + ' musiques !')
+    } else {
+      addedMusics.forEach((music) => {
+        if (music.link.replace(/\s/g, '') === '') {
+          alert('Rentre les liens');
+          error = true;
+        }
+      });
+
+      if (!error) {
         this.props.setUser({userName: userName, addedMusics: addedMusics});
         this.props.history.push({
           pathname: "/loading",
         });
-      // }
-    // }
+      }
+    }
   };
 
   render() {
