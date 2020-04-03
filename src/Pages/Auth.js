@@ -75,7 +75,7 @@ class Auth extends Component {
 
     if (userName.replace(/\s/g, '') === '') {
       alert('Rentre un nom !');
-    } else if (addedMusics.length !== process.env.REACT_APP_NB_MUSICS) {
+    } else if (addedMusics.length.toString() !== process.env.REACT_APP_NB_MUSICS.toString()) {
       alert('Rentre ' + process.env.REACT_APP_NB_MUSICS + ' musiques !')
     } else {
       addedMusics.forEach((music) => {

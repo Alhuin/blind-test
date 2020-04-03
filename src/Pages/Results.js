@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import CustomTable from "../Components/CustomTable";
+import {Link} from "react-router-dom";
 
 class Results extends Component {
   constructor(props) {
@@ -8,24 +9,32 @@ class Results extends Component {
       corrections : [],
       scores: [],
       userName: this.props.userName,
+      end: false,
     }
   }
 
   componentDidMount() {
-    if (this.props.socket === null) {
-      this.props.history.push({
+    const { socket, history }  = this.props;
+
+    if (socket === null) {
+      history.push({
         pathname: "/",
       });
     } else {
-      this.props.socket.on('setCorrections', (corrections, scores) => {
-        this.setState({corrections, scores})
+      socket.on('setCorrections', (corrections, scores, nbUsers) => {
+        this.setState({corrections, scores});
+        if (corrections.length === nbUsers) {
+          socket.disconnect();
+          this.setState({ end: true })
+        }
       });
-      this.props.socket.emit('getCorrections');
+      socket.emit('getCorrections');
     }
   }
 
   render() {
     const { scores, corrections } = this.state;
+    const { logout } = this.props;
     let correction = null;
 
     if (corrections.length !== 0) {
@@ -53,6 +62,20 @@ class Results extends Component {
             />
           </>
         )}
+        <li>
+          <Link to={{
+            pathname: "/",
+          }}>
+            <button
+              className={"button"}
+              type={"submit"}
+              onClick={logout}
+              disabled={!this.state.end}
+            >
+              <span>Nouvelle partie </span>
+            </button>
+          </Link>
+        </li>
       </div>
     )
   }

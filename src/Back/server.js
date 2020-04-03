@@ -6,9 +6,9 @@ const express = require('express'),
 
 let id = 1;
 let musics = [];
-const users = [];
-const corrections = [];
-const scores = [];
+let users = [];
+let corrections = [];
+let scores = [];
 
 const shuffle = function (array) {
 
@@ -95,7 +95,14 @@ io.on('connection', (socket) => {
     console.log('emitting setCorrections');
     console.log(corrections);
     console.log(scores);
-    io.emit('setCorrections', corrections, scores);
+    io.emit('setCorrections', corrections, scores, users.length);
+    if (corrections.length === users.length) {
+      id = 1;
+      musics = [];
+      users = [];
+      corrections = [];
+      scores = [];
+    }
   });
 
   socket.on('launchedPlaylist', function() {

@@ -5,4 +5,12 @@ const reducers = combineReducers({
   blindReducer,
 });
 
-export default reducers;
+const rootReducer = (state, action) => {
+  if (action.type === 'USER_LOGOUT') {
+    state = undefined
+  }
+
+  return reducers(state, action)
+};
+
+export default rootReducer;

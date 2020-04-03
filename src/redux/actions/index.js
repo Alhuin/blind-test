@@ -3,6 +3,7 @@ import {
   SET_ADMIN,
   SET_USER,
   SET_ANSWERS,
+  USER_LOGOUT,
 } from './types';
 
 export function setSocket(payload) {
@@ -17,6 +18,6 @@ export function setUser(payload) {
   return ({ type: SET_USER, payload });
 }
 
-export function setAnswers(payload) {
-  return ({ type: SET_ANSWERS, payload });
+export function logout(payload) {
+  return ({ type: USER_LOGOUT, payload });
 }

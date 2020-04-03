@@ -140,10 +140,6 @@ class Play extends Component {
         <li>
           <Link to={{
             pathname: "/results",
-            state: {
-              answers: this.state.answers,
-              musics: this.state.musics,
-            },
           }}>
             <button
             id={'submit'}
