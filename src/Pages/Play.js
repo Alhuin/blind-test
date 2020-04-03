@@ -12,40 +12,41 @@ class Play extends Component {
       musics: [],
       answers: [],
       endReached : false,
-      admin: this.props.location.state.admin,
       playing: 0,
-      userName: this.props.location.state.userName,
     };
 
   }
 
   componentDidMount() {
-    this.props.socket.on('correction', (correct) => {
-      this.setState({ score: correct.length});
-      correct.forEach((correct) => document.getElementById(correct).style.color = 'green')
-    });
+    const { socket, history } = this.props;
 
-    this.props.socket.on('sendMusics', (musics) => {
-      const answers = [];
-      musics.forEach((music) => {
-        answers.push({id: music.id, artist:'', title:''})
+    if (socket === null) {
+      history.push({
+        pathname: "/",
       });
-      this.setState({ musics, answers });
-    });
+    } else {
+      socket.on('sendMusics', (musics) => {
+        const answers = [];
+        musics.forEach((music) => {
+          answers.push({id: music.id, artist:'', title:''})
+        });
+        this.setState({ musics, answers });
+      });
 
-    this.props.socket.on('launch', () => {
-      this.props.socket.emit('getNextUrl');
-    });
+      socket.on('launch', () => {
+        socket.emit('getNextUrl', 0);
+      });
 
-    this.props.socket.on('endPlaylist', () => {
-      this.setState({endReached: true});
-    });
+      socket.on('endPlaylist', () => {
+        this.setState({endReached: true});
+      });
 
-    this.props.socket.on('nextUrl', (id, url) => {
-      this.setState({playing: id})
-    });
+      socket.on('nextUrl', (id, url) => {
+        this.setState({playing: id})
+      });
 
-    this.props.socket.emit('getMusics');
+      socket.emit('getMusics');
+    }
   }
 
   strcmp = (str1, str2) => {
@@ -93,6 +94,7 @@ class Play extends Component {
   };
 
   sendCorrection() {
+    const { socket, userName } = this.props;
     if (this.state.endReached) {
       const correction = { lines: [], points: 0 };
 
@@ -108,25 +110,25 @@ class Play extends Component {
         correction.lines.push(line);
         correction.points += artistIsCorrect + titleIsCorrect;
       });
-
-      this.props.socket.emit('sendCorrection', correction);
+      socket.emit('sendCorrection', userName, correction);
     }
   }
 
   render() {
     const { musics, playing, endReached } = this.state;
+    const { socket, admin } = this.props;
 
     return (
       <div id={"main"}>
         <h2>Blind Test</h2>
         <Controls
-          admin={this.state.admin}
+          admin={admin}
           launch={() => {
             document.getElementById('launch').style.display = 'none';
-            this.props.socket.emit('launchedPlaylist');
+            socket.emit('launchedPlaylist');
           }}
         />
-        <MediaPlayer admin={this.state.admin} socket={this.props.socket}/>
+        <MediaPlayer admin={this.state.admin} socket={socket}/>
         <CustomTable
           type={"Play"}
           updateArtist={this.updateArtist}
@@ -140,7 +142,6 @@ class Play extends Component {
             pathname: "/results",
             state: {
               answers: this.state.answers,
-              userName: this.state.userName,
               musics: this.state.musics,
             },
           }}>

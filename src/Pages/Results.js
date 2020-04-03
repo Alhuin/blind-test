@@ -7,17 +7,22 @@ class Results extends Component {
     this.state = {
       corrections : [],
       scores: [],
-      userName: this.props.location.state.userName,
+      userName: this.props.userName,
     }
   }
 
   componentDidMount() {
-    this.props.socket.on('setCorrections', (corrections, scores) => {
-      this.setState({corrections, scores})
-    });
-    this.props.socket.emit('getCorrections');
+    if (this.props.socket === null) {
+      this.props.history.push({
+        pathname: "/",
+      });
+    } else {
+      this.props.socket.on('setCorrections', (corrections, scores) => {
+        this.setState({corrections, scores})
+      });
+      this.props.socket.emit('getCorrections');
+    }
   }
-
 
   render() {
     const { scores, corrections } = this.state;

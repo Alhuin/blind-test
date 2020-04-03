@@ -33,12 +33,11 @@ io.on('connection', (socket) => {
 
   console.log('user connected');
 
-  // Click Enter in auth
+  // Click entered loading screen
 
   socket.on('enter', (userName, addedMusics) => {
 
     socket.username = userName;
-    socket.i = 0;
 
     console.log(socket.username + 'entered loading screen');
 
@@ -53,10 +52,6 @@ io.on('connection', (socket) => {
       console.log(socket.username + 'isAdmin');
     }
     users.push({ name: userName, nbMusics: addedMusics.length });
-  });
-
-  // On Loading screen
-  socket.on('getUsers', () => {
     io.emit('setUsers', users);
   });
 
@@ -77,25 +72,23 @@ io.on('connection', (socket) => {
   });
 
 
-  socket.on('getNextUrl', function() {
+  socket.on('getNextUrl', function(index) {
     console.log('GNU');
     console.log(socket.username);
-    console.log(socket.i);
-    if (socket.i === musics.length) {
+    console.log(index);
+    if (index === musics.length) {
       console.log('sending endPlaylist to ' + socket.username);
       socket.emit('endPlaylist');
     } else {
-      socket.emit('nextUrl', musics[socket.i].id, musics[socket.i].link);
-      socket.i++;
+      socket.emit('nextUrl', musics[index].id, musics[index].link);
     }
   });
 
-  socket.on('sendCorrection', (correction) => {
-    const user = socket.username;
-    console.log('revieved sendCorreection');
+  socket.on('sendCorrection', (userName, correction) => {
+    console.log('received correction from ' + userName);
     console.log(correction);
-    corrections.push({ user, correction: correction.lines, points: correction.points });
-    scores.push({ user, points: correction.points });
+    corrections.push({ user: userName, correction: correction.lines, points: correction.points });
+    scores.push({ user: userName, points: correction.points });
   });
 
   socket.on('getCorrections', () => {
@@ -104,6 +97,7 @@ io.on('connection', (socket) => {
     console.log(scores);
     io.emit('setCorrections', corrections, scores);
   });
+
   socket.on('launchedPlaylist', function() {
     io.emit('launch');
   });
@@ -114,13 +108,12 @@ io.on('connection', (socket) => {
 });
 
 app.get('/', (req, res) => {
-
-  res.send('Chat Server is running on port 3000')
+  res.send('Blind test Server')
 });
 
 
 server.listen(8080,()=>{
 
-  console.log('Node app is running on port 3000')
+  console.log('Node app is running on port 8080')
 
 });

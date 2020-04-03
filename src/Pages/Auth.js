@@ -69,32 +69,31 @@ class Auth extends Component {
   };
 
   handleClick = () => {
-    let error = false;
+    // let error = false;
 
-    if (this.state.userName.replace(/\s/g, '') === '') {
-      alert('Rentre un nom !');
-    } else if (this.state.addedMusics.length !== 5) {
-      alert('Rentre 5 musiques !')
-    } else {
-      this.state.addedMusics.forEach((music) => {
-        if (music.artist.replace(/\s/g, '') === ''
-          || music.title.replace(/\s/g, '') === ''
-          || music.link.replace(/\s/g, '') === '') {
-          alert('Remplis tous les champs de tes musiques');
-          error = true;
-        }
-      });
+    const { userName, addedMusics } = this.state;
 
-      if (!error) {
-        this.props.socket.emit('enter', this.state.userName, this.state.addedMusics);
+    // if (userName.replace(/\s/g, '') === '') {
+    //   alert('Rentre un nom !');
+    // } else if (addedMusics.length !== 5) {
+    //   alert('Rentre 5 musiques !')
+    // } else {
+    //   addedMusics.forEach((music) => {
+    //     if (music.artist.replace(/\s/g, '') === ''
+    //       || music.title.replace(/\s/g, '') === ''
+    //       || music.link.replace(/\s/g, '') === '') {
+    //       alert('Remplis tous les champs de tes musiques');
+    //       error = true;
+    //     }
+    //   });
+    //
+    //   if (!error) {
+        this.props.setUser({userName: userName, addedMusics: addedMusics});
         this.props.history.push({
           pathname: "/loading",
-          state: {
-            userName: this.state.userName,
-          }
         });
-      }
-    }
+      // }
+    // }
   };
 
   render() {

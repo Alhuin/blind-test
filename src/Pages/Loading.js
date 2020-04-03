@@ -1,36 +1,49 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import CustomTable from "../Components/CustomTable";
+import openSocket from 'socket.io-client';
+
 
 class Loading extends Component {
   constructor(props) {
     super(props);
     this.state = {
       users: [],
-      admin: false,
-      userName: this.props.location.state.userName,
     }
   }
 
   componentDidMount() {
-    this.props.socket.on('setUsers', (users) => {
-      this.setState({ users })
-    });
+    const { userName, history } = this.props;
 
-    this.props.socket.on('begin', () => {
-      this.props.history.push({
-        pathname: "/play",
-        state: { admin: this.state.admin, userName: this.state.userName }
+    if (userName === '') {
+      history.push({
+        pathname: "/",
       });
-    });
+    } else {
+      const {userName, addedMusics, setAdmin, setSocket} = this.props;
+      const socket = openSocket('http://localhost:8080/');
+      setSocket(socket);
 
-    this.props.socket.on('admin', () => this.setState({admin: true}));
-    this.props.socket.emit('getUsers');
+      console.log(this.props);
+      socket.on('setUsers', (users) => {
+        this.setState({users})
+      });
+
+      socket.on('begin', () => {
+        this.props.history.push({
+          pathname: "/play",
+        });
+      });
+
+      socket.on('admin', () => setAdmin(true));
+      socket.emit('enter', userName, addedMusics);
+    }
   }
 
 
   render() {
     const { users } = this.state;
+    const { admin, socket } = this.props;
 
     return(
       <div id={'main'}>
@@ -44,15 +57,11 @@ class Loading extends Component {
         <li>
           <Link to={{
             pathname: "/play",
-            state: {
-              admin: this.state.admin,
-              userName: this.state.userName,
-            }
           }}>
             <button
               className={"button"}
-              onClick={()=> this.props.socket.emit('beginPlay')}
-              disabled={!this.state.admin}
+              onClick={()=> socket.emit('beginPlay')}
+              disabled={!admin}
             >
               <span>Jouer</span>
             </button>
